@@ -21,3 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Route::get("events",[EventsController::class,"index"]);
 Route::post("events",[EventsController::class,"create"]);
 Route::get("events",[EventsController::class,"index"]);
+
+Route::get("events/{id}",[EventsController::class,"getEvent"]);

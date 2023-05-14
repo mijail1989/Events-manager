@@ -16,24 +16,14 @@ class EventsController extends Controller
 {
     
     
-    public function events(){
+    private function events(){
         return Events::query();       
     }
     /**
     * Display a listing of the resource.
     */
-    public function show(){
-        
-        $events=Events::all();
-        return (compact("events"));
-    }
     
-    public function verify($element,$queryUrl){
-        (array_key_exists("$element",$queryUrl)&& $queryUrl["$element"]) ? true : false; 
-        
-    }
-    
-    public function filterLimit($limit, $events){
+    private function filterLimit($limit, $events){
         try {
             $num=number_format($limit,0);
         } catch(Throwable $e) {
@@ -41,24 +31,24 @@ class EventsController extends Controller
         }
         return $events->take($num);
     }
-
-    public function filterName($name,$events){
-
+    
+    private function filterName($name,$events){
+        
         return $events->where("name","like", "%".$name."%");
     }
     
-    public function filterPrice($value,$events){
+    private function filterPrice($value,$events){
         return in_array($value, ['asc', 'desc']) ? $events->orderBy("price",$value) : $events;
     }
-
-    public function filterDate($value, $events) {
+    
+    private function filterDate($value, $events) {
         return in_array($value, ['asc', 'desc']) ? $events->orderBy("date",$value) : $events;
     }
-
-    public function filterLocation($value, $events) {
+    
+    private function filterLocation($value, $events) {
         return $events->where("place","like", "%".$value."%");
     }
-
+    
     
     public function index(Request $request)
     {   
@@ -80,93 +70,29 @@ class EventsController extends Controller
         }
         $events = $events->get();
         return $events;
-        // dump( $filters[$filterKey]);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    public function getEvent($id)
+    {
+        $events=$this->events()->where('id',$id)->first();
+        return $events; 
+    }
     
     /**
     * Show the form for creating a new resource.
     */
-    public function create(Request $request){
+    public function create(Request $request)
+    {
         $event=$request->getContent();
-        $ernesto=json_decode($event,true);
-        if( is_array($ernesto)){
+        $requestBody=json_decode($event,true);
+        if( is_array($requestBody)){
             Events::create([
-                "name"=>$ernesto["name"],
-                "description"=>$ernesto["description"],
-                "date"=>$ernesto["date"],
-                "place"=>$ernesto["place"],
-                "price"=>$ernesto["price"],
+                "name"=>$requestBody["name"],
+                "description"=>$requestBody["description"],
+                "date"=>$requestBody["date"],
+                "place"=>$requestBody["place"],
+                "price"=>$requestBody["price"],
             ]);
         }
     }
-    
-    
-    
-    /**
-    * Store a newly created resource in storage.
-    */
-    public function store(Request $request)
-    {
-        $validate= $request->validate([
-            "name"=>"max:255",
-            "description"=>"max:255",
-            "date"=>"nullable",
-            "place"=>"max:255",
-            "price"=>"nullable"
-        ]);
-        // log($request->getContent()->name);
-        // $output = $request;
-        // if (is_array($output))
-        //     $output = implode(',', $output);
-        return $request->getContent();
-        //    return "$event";
-    }
-    
-    /**
-    * Display the specified resource.
-    */
-    // public function show(Events $events)
-    // {
-        //     //
-        // }
-        
-        /**
-        * Show the form for editing the specified resource.
-        */
-        public function edit(Events $events)
-        {
-            //
-        }
-        
-        /**
-        * Update the specified resource in storage.
-        */
-        public function update(Request $request, Events $events)
-        {
-            //
-        }
-        
-        /**
-        * Remove the specified resource from storage.
-        */
-        public function destroy(Events $events)
-        {
-            //
-        }
-    }
-    
+}
