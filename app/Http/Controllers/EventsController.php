@@ -59,7 +59,7 @@ class EventsController extends Controller
             'name'=> 'filterName',
             "price"=>'filterPrice',
             'date'=> 'filterDate',
-            'location'=> 'filterLocation'
+            'place'=> 'filterLocation'
         );
         $filterKeys=array_keys($filters);
         foreach($filterKeys as $filterKey){
