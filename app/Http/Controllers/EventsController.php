@@ -4,12 +4,8 @@ namespace App\Http\Controllers;
 
 use Throwable;
 use App\Models\Events;
-use Faker\Core\Number;
-use Hamcrest\Arrays\IsArray;
 use Illuminate\Http\Request;
-use PhpParser\Node\Expr\Print_;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Console\Scheduling\Event;
+use Illuminate\Support\Facades\Validator;
 use Spatie\LaravelIgnition\Recorders\DumpRecorder\Dump;
 
 class EventsController extends Controller
@@ -83,16 +79,43 @@ class EventsController extends Controller
     */
     public function create(Request $request)
     {
-        $event=$request->getContent();
-        $requestBody=json_decode($event,true);
-        if( is_array($requestBody)){
-            Events::create([
-                "name"=>$requestBody["name"],
-                "description"=>$requestBody["description"],
-                "date"=>$requestBody["date"],
-                "place"=>$requestBody["place"],
-                "price"=>$requestBody["price"],
-            ]);
+        $validator = Validator::make($request->all(),[
+            'name' => 'required|string|max:255|min:4',
+            'description' => 'required|string|max:255|min:4',
+            'date' => 'required|date',
+            'place' => 'required|string|max:255|min:4',
+            'price' => 'required|numeric'
+        ]);        
+        if ($validator->fails()) {
+            return response(['message' => 'Hai fallito la creazione di un Evento'], 403);
         }
+        
+        Events::create([
+            "name"=>$request["name"],
+            "description"=>$request["description"],
+            "date"=>$request["date"],
+            "place"=>$request["place"],
+            "price"=>$request["price"],
+        ]);
+        
+    }
+    public function update(Request $request,$id){ 
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|min:4',
+            'description' => 'required|string|max:255|min:4',
+            'date' => 'required|date',
+            'place' => 'required|string|max:255|min:4',
+            'price' => 'required|numeric'
+        ]);
+        if ($validator->fails()) {
+            return response(['message' => 'Errore'], 403);
+        }
+        $event=Events::where("id",$id)->first();
+        $event->name=$request->name;
+        $event->description=$request->description;
+        $event->date=$request->date;
+        $event->place=$request->place;
+        $event->price=$request->price;
+        $event->save();
     }
 }

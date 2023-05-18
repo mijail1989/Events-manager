@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\API\AuthenticationController;
@@ -18,7 +17,9 @@ use App\Http\Controllers\API\AuthenticationController;
 // Route::get("events",[EventsController::class,"index"]);
 Route::get("/events",[EventsController::class,"index"]);
 Route::post("/events",[EventsController::class,"create"]);
+
 Route::get("/events/{id}",[EventsController::class,"getEvent"]);
+Route::put("/events/{id}",[EventsController::class,"update"]);
 
 
 Route::post('/login', [AuthenticationController::class, 'login'])->name('login');
